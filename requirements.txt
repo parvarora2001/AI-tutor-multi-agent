@@ -1,0 +1,9 @@
+langchain 
+streamlit 
+chromadb 
+accelerate 
+transformers==4.44.2
+torch==2.2.2
+sentencepiece
+scikit-learn
+nltk
