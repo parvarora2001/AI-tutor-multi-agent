@@ -1,17 +1,14 @@
+from sentence_transformers import util
+
 class GradingAgent:
-    def __init__(self, model_pipeline):
-        self.model = model_pipeline
+    def __init__(self, similarity_model):
+        self.model = similarity_model
 
-    def grade_answer(self, student_answer, expected_answer):
-        # Combine question + reference into input for classification
-        prompt = f"Student answer: {student_answer} | Reference: {expected_answer}"
-        result = self.model(prompt)[0]
-        label = result['label']
-        score = result['score']
+    def grade_answer(self, student_answer, expected_answer, threshold=0.7):
+        # Compute semantic similarity
+        embeddings_student = self.model.encode(student_answer, convert_to_tensor=True)
+        embeddings_expected = self.model.encode(expected_answer, convert_to_tensor=True)
+        similarity = util.cos_sim(embeddings_student, embeddings_expected).item()
 
-        if label == "POSITIVE":
-            grade = "Correct"
-        else:
-            grade = "Incorrect"
-
-        return {"grade": grade, "confidence": round(score, 2)}
+        grade = "Correct" if similarity >= threshold else "Incorrect"
+        return {"grade": grade, "confidence": round(similarity, 2)}

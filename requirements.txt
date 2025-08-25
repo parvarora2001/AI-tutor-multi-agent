@@ -7,3 +7,5 @@ torch==2.2.2
 sentencepiece
 scikit-learn
 nltk
+sentence_transformers
+numpy==1.25.0

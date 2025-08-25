@@ -1,29 +1,26 @@
 from transformers import pipeline
+from sentence_transformers import SentenceTransformer
 
 class ModelLoader:
     """
-    Loads open-source models once and shares them across agents.
+    Loads and shares all open-source models across agents.
     """
 
     def __init__(self):
         print("Loading shared open-source models (this may take a minute)...")
 
-        # Shared Teaching/Feedback model
+        # Teaching + Feedback model
         self.text_model_pipeline = pipeline(
             "text2text-generation",
-            model="google/flan-t5-small",
-            device=0  # MPS device
+            model="google/flan-t5-base",
+            device=-1  # MPS if on Mac, GPU otherwise
         )
 
-        # Shared Grading model
-        self.grading_pipeline = pipeline(
-            "text-classification",
-            model="distilbert-base-uncased-finetuned-sst-2-english",
-            device=0
-        )
+        # Semantic similarity model for grading
+        self.similarity_model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
 
     def get_text_pipeline(self):
         return self.text_model_pipeline
 
-    def get_grading_pipeline(self):
-        return self.grading_pipeline
+    def get_similarity_model(self):
+        return self.similarity_model
