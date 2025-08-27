@@ -4,15 +4,15 @@ import torch
 
 class ModelLoader:
     """
-    Loads and shares all open-source models across agents.
+    Loads and shares lightweight open-source models across agents.
     """
 
     def __init__(self):
-        print("Loading shared open-source models (this may take a minute)...")
+        print("Loading lightweight shared models (this may take a minute)...")
         
         try:
-            # Use a larger, better model for more complete responses
-            model_name = "google/flan-t5-base"  # Better quality than small model
+            # Use the smallest possible model to prevent memory issues
+            model_name = "google/flan-t5-small"  # Smallest flan-t5 model
             
             # Load tokenizer and model separately for better memory management
             tokenizer = AutoTokenizer.from_pretrained(model_name)
@@ -22,7 +22,7 @@ class ModelLoader:
                 low_cpu_mem_usage=True
             )
             
-            # Teaching + Feedback model with CPU-only mode
+            # Teaching + Feedback model with minimal configuration
             self.text_model_pipeline = pipeline(
                 "text2text-generation",
                 model=model,
@@ -30,10 +30,8 @@ class ModelLoader:
                 device="cpu",  # Force CPU to avoid MPS/GPU issues
                 do_sample=True,
                 temperature=0.7,
-                pad_token_id=tokenizer.eos_token_id,
-                eos_token_id=tokenizer.eos_token_id,
                 generation_kwargs={
-                    "max_new_tokens": 256,
+                    "max_new_tokens": 64,  # Very short responses
                     "do_sample": True,
                     "temperature": 0.7,
                     "top_p": 0.9,
@@ -41,19 +39,19 @@ class ModelLoader:
                 }
             )
 
-            # Semantic similarity model for grading
+            # Use the smallest sentence transformer model
             self.similarity_model = SentenceTransformer(
                 'sentence-transformers/all-MiniLM-L6-v2',
                 device='cpu'
             )
             
-            print("✅ Models loaded successfully!")
+            print("✅ Lightweight models loaded successfully!")
             
         except Exception as e:
             print(f"❌ Error loading models: {e}")
-            print("Falling back to lightweight alternatives...")
+            print("Falling back to dummy implementations...")
             
-            # Fallback: Use even smaller models or dummy implementations
+            # Fallback: Dummy implementations
             self.text_model_pipeline = None
             self.similarity_model = None
 

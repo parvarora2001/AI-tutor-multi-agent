@@ -1,6 +1,8 @@
 import os
 os.environ["PYTORCH_ENABLE_MPS_FALLBACK"] = "1"   # fallback to CPU if MPS fails
 os.environ["TOKENIZERS_PARALLELISM"] = "false"    # avoid semaphore leak warnings
+os.environ["PYTORCH_MPS_HIGH_WATERMARK_RATIO"] = "0.0"  # prevent MPS memory issues
+os.environ["HF_HOME"] = "/tmp/hf_cache"  # use temp directory for cache
 
 
 from models.model_loader import ModelLoader

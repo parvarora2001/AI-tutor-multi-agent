@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  tutor-agent:
+    build: .
+    container_name: tutor-agent
+    volumes:
+      # Mount cache directory to persist model downloads
+      - ./cache:/app/.cache/huggingface
+      # Mount results directory
+      - ./results:/app/results
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TOKENIZERS_PARALLELISM=false
+      - HF_HOME=/app/.cache/huggingface
+    deploy:
+      resources:
+        limits:
+          memory: 4G  # Allocate 4GB RAM
+        reservations:
+          memory: 2G  # Reserve 2GB RAM
+    stdin_open: true  # Keep STDIN open for interactive input
+    tty: true         # Allocate a pseudo-TTY
+    ports:
+      - "8000:8000"   # For future web interface

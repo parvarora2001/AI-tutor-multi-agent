@@ -2,10 +2,10 @@ langchain
 streamlit 
 chromadb 
 accelerate 
-transformers==4.44.2
-torch==2.2.2
+transformers
+torch
 sentencepiece
 scikit-learn
 nltk
 sentence_transformers
-numpy==1.25.0
+numpy
